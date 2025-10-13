@@ -211,6 +211,7 @@ footer {
 <?php endif; ?>
 
 <footer>
+  
   <p>© <?= date("Y") ?> Thicien | Photo Album</p>
 </footer>
 
