@@ -194,3 +194,4 @@ $result = isset($_SESSION['user_id']) ? $conn->query("SELECT * FROM photos WHERE
 <footer>© 2025 Thicien | Secure Photo Album</footer>
 </body>
 </html>
+
