@@ -1,8 +1,9 @@
-  <?php
+<?php
 $host = "localhost";
 $user = "root";
 $pass = "";
 $dbname = "photo_album_single";
+
 $conn = new mysqli($host, $user, $pass);
 if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
 
@@ -17,6 +18,9 @@ $conn->query("CREATE TABLE IF NOT EXISTS photos (
   uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )");
 
+$upload_success = false;
+
+// Delete photo
 if (isset($_GET['delete'])) {
     $id = intval($_GET['delete']);
     $result = $conn->query("SELECT filename FROM photos WHERE id=$id");
@@ -28,6 +32,7 @@ if (isset($_GET['delete'])) {
     exit;
 }
 
+// Edit photo
 if (isset($_POST['edit_id'])) {
     $id = intval($_POST['edit_id']);
     $title = $_POST['title'];
@@ -37,7 +42,7 @@ if (isset($_POST['edit_id'])) {
     exit;
 }
 
-$upload_success = false;
+// Upload photo
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["photo"])) {
     $title = $_POST['title'];
     $description = $_POST['description'];
@@ -62,184 +67,194 @@ $result = $conn->query("SELECT * FROM photos ORDER BY uploaded_at DESC");
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Photo Album - Thicien</title>
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f3f3f3;
-  margin: 0;
-  padding: 0;
-}
-header {
-  background: #007bff;
-  color: white;
-  text-align: center;
-  padding: 15px;
-}
-h1 { margin: 0; }
-.container {
-  max-width: 900px;
-  margin: 20px auto;
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-form {
-  text-align: center;
-  margin-bottom: 30px;
-}
-form input, form textarea {
-  width: 80%;
-  padding: 8px;
-  margin: 8px 0;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-form button {
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-form button:hover {
-  background: #0056b3;
-}
-.gallery {
-  display: none; /* Hidden by default */
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 15px;
-}
-.photo {
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  text-align: center;
-  overflow: hidden;
-  padding-bottom: 10px;
-}
-.photo img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-}
-.photo h3 {
-  margin: 10px 0 5px;
-}
-.photo p {
-  padding: 0 10px;
-  color: #555;
-}
-.photo a {
-  display: inline-block;
-  margin: 5px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: white;
-  text-decoration: none;
-}
-.delete-btn { background: #dc3545; }
-.edit-btn { background: #17a2b8; }
-.edit-btn:hover { background: #138496; }
-.delete-btn:hover { background: #c82333; }
-footer {
-  text-align: center;
-  padding: 10px;
-  color: #777;
-}
-.edit-form {
-  text-align: center;
-  margin: 20px;
-  background: #f8f9fa;
-  padding: 15px;
-  border-radius: 10px;
-}
-.edit-form input, .edit-form textarea {
-  width: 80%;
-  margin: 5px 0;
-  padding: 8px;
-}
-.show-btn {
-  display: block;
-  text-align: center;
-  margin: 20px auto;
-  background: #28a745;
-  color: white;
-  padding: 10px 25px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-.show-btn:hover {
-  background: #218838;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Photo Album - Thicien</title>
+
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #007bff;
+      color: white;
+      text-align: center;
+      padding: 20px 0;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    header img {
+      width: 40px;
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .show-btn {
+      display: inline-block;
+      background-color: #007bff;
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .show-btn:hover {
+      background-color: #0056b3;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .gallery {
+      display: none;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    .photo-card {
+      background-color: #fafafa;
+      border-radius: 10px;
+      padding: 10px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .photo-card img {
+      max-width: 100%;
+      border-radius: 8px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #666;
+      padding: 20px;
+      font-size: 14px;
+    }
+  </style>
 </head>
 <body>
-<header>
-  <h1>📸 My Photo Album - Thicien</h1>
-</header>
+  <header>
+    📸 My Photo Album - Thicien
+  </header>
 
-<div class="container">
-  <h2 style="text-align:center;">Add New Photo</h2>
-  <form method="POST" enctype="multipart/form-data">
-    <input type="text" name="title" placeholder="Photo title" required><br>
-    <textarea name="description" placeholder="Photo description" required></textarea><br>
-    <input type="file" name="photo" accept="image/*" required><br>
-    <button type="submit">Upload Photo</button>
-  </form>
+  <div class="container">
+    <h2>Add New Photo</h2>
 
-  <?php if ($upload_success): ?>
-    <p style="text-align:center; color:green;">✅ Photo uploaded successfully!</p>
-    <button class="show-btn" onclick="showGallery()">View My Gallery</button>
-  <?php else: ?>
-    <button class="show-btn" onclick="showGallery()">Open Gallery</button>
-  <?php endif; ?>
+    <form id="photoForm">
+      <input type="text" id="title" placeholder="Photo title" required />
+      <textarea id="description" placeholder="Photo description" required></textarea>
+      <input type="file" id="photo" accept="image/*" required />
+      <button type="submit">Upload Photo</button>
+    </form>
 
-  <h2 style="text-align:center;">Gallery</h2>
-  <div id="gallery" class="gallery">
-    <?php while ($row = $result->fetch_assoc()): ?>
-      <div class="photo">
-        <img src="<?= htmlspecialchars($row['filename']) ?>" alt="<?= htmlspecialchars($row['title']) ?>">
-        <h3><?= htmlspecialchars($row['title']) ?></h3>
-        <p><?= htmlspecialchars($row['description']) ?></p>
-        <a href="?edit=<?= $row['id'] ?>" class="edit-btn">Edit</a>
-        <a href="?delete=<?= $row['id'] ?>" class="delete-btn" onclick="return confirm('Delete this photo?');">Delete</a>
-      </div>
-    <?php endwhile; ?>
+    <!-- ✅ Always Visible Gallery Button -->
+    <div style="text-align:center; margin-top:20px;">
+      <button class="show-btn" onclick="toggleGallery()">🖼️ Open My Gallery</button>
+    </div>
+
+    <h2>Gallery</h2>
+    <div id="gallery" class="gallery">
+      <!-- Uploaded photos will appear here -->
+    </div>
   </div>
-</div>
 
-<?php if (isset($_GET['edit'])):
-  $id = intval($_GET['edit']);
-  $photo = $conn->query("SELECT * FROM photos WHERE id=$id")->fetch_assoc();
-?>
-<div class="edit-form">
-  <h2>Edit Photo</h2>
-  <form method="POST">
-    <input type="hidden" name="edit_id" value="<?= $photo['id'] ?>">
-    <input type="text" name="title" value="<?= htmlspecialchars($photo['title']) ?>" required><br>
-    <textarea name="description" required><?= htmlspecialchars($photo['description']) ?></textarea><br>
-    <button type="submit">Save Changes</button>
-    <a href="<?= $_SERVER['PHP_SELF'] ?>" style="text-decoration:none;background:#6c757d;color:white;padding:8px 12px;border-radius:5px;">Cancel</a>
-  </form>
-</div>
-<?php endif; ?>
+  <footer>
+    © 2025 Thicien | Photo Album
+  </footer>
 
-<footer>
-  <p>© <?= date("Y") ?> Thicien | Photo Album</p>
-</footer>
+  <script>
+    const photoForm = document.getElementById("photoForm");
+    const gallery = document.getElementById("gallery");
 
-<script>
-function showGallery() {
-  document.getElementById("gallery").style.display = "grid";
-  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-}
-</script>
+    // Handle photo upload
+    photoForm.addEventListener("submit", (e) => {
+      e.preventDefault();
 
+      const title = document.getElementById("title").value;
+      const description = document.getElementById("description").value;
+      const photo = document.getElementById("photo").files[0];
+
+      if (!photo) {
+        alert("Please select a photo to upload.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const photoCard = document.createElement("div");
+        photoCard.classList.add("photo-card");
+
+        photoCard.innerHTML = `
+          <img src="${event.target.result}" alt="${title}" />
+          <h3>${title}</h3>
+          <p>${description}</p>
+        `;
+
+        gallery.appendChild(photoCard);
+      };
+
+      reader.readAsDataURL(photo);
+      photoForm.reset();
+      gallery.style.display = "grid";
+    });
+
+    // Toggle gallery visibility
+    function toggleGallery() {
+      if (gallery.style.display === "grid") {
+        gallery.style.display = "none";
+      } else {
+        gallery.style.display = "grid";
+        window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+      }
+    }
+  </script>
 </body>
 </html>
+
+
 
