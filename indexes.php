@@ -37,6 +37,7 @@ if (isset($_POST['edit_id'])) {
     exit;
 }
 
+$upload_success = false;
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["photo"])) {
     $title = $_POST['title'];
     $description = $_POST['description'];
@@ -49,8 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["photo"])) {
         $stmt = $conn->prepare("INSERT INTO photos (title, description, filename) VALUES (?, ?, ?)");
         $stmt->bind_param("sss", $title, $description, $file);
         $stmt->execute();
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit;
+        $upload_success = true;
     } else {
         echo "<p style='color:red;text-align:center;'>Error uploading file!</p>";
     }
@@ -109,7 +109,7 @@ form button:hover {
   background: #0056b3;
 }
 .gallery {
-  display: grid;
+  display: none; /* Hidden by default */
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 15px;
 }
@@ -162,6 +162,20 @@ footer {
   margin: 5px 0;
   padding: 8px;
 }
+.show-btn {
+  display: block;
+  text-align: center;
+  margin: 20px auto;
+  background: #28a745;
+  color: white;
+  padding: 10px 25px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.show-btn:hover {
+  background: #218838;
+}
 </style>
 </head>
 <body>
@@ -178,8 +192,15 @@ footer {
     <button type="submit">Upload Photo</button>
   </form>
 
+  <?php if ($upload_success): ?>
+    <p style="text-align:center; color:green;">✅ Photo uploaded successfully!</p>
+    <button class="show-btn" onclick="showGallery()">View My Gallery</button>
+  <?php else: ?>
+    <button class="show-btn" onclick="showGallery()">Open Gallery</button>
+  <?php endif; ?>
+
   <h2 style="text-align:center;">Gallery</h2>
-  <div class="gallery">
+  <div id="gallery" class="gallery">
     <?php while ($row = $result->fetch_assoc()): ?>
       <div class="photo">
         <img src="<?= htmlspecialchars($row['filename']) ?>" alt="<?= htmlspecialchars($row['title']) ?>">
@@ -209,9 +230,15 @@ footer {
 <?php endif; ?>
 
 <footer>
-  
   <p>© <?= date("Y") ?> Thicien | Photo Album</p>
 </footer>
+
+<script>
+function showGallery() {
+  document.getElementById("gallery").style.display = "grid";
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+</script>
 
 </body>
 </html>
