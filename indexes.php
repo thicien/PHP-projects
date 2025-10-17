@@ -132,7 +132,7 @@ if (isset($_POST['edit']) && isset($_SESSION['user_id'])) {
 
 <div class="container">
 <header>
-  <h1>📸 My Photo Album - THICIEN</h1>
+  <h1>📸 My Photo Album - Thicien</h1>
 </header>
 
 <?php if (!isset($_SESSION['user_id'])): ?>
