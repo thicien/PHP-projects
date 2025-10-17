@@ -113,19 +113,36 @@ if (isset($_POST['edit']) && isset($_SESSION['user_id'])) {
 <meta charset="UTF-8">
 <title>Photo Album - Thicien</title>
 <style>
-  body {font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 0;}
-  .container {max-width: 900px; margin: 30px auto; background: white; padding: 25px; border-radius: 10px;}
-  h2 {color: #007bff;}
-  input, textarea, button {width: 100%; margin: 5px 0; padding: 10px; border-radius: 5px; border: 1px solid #ccc;}
-  button {background: #007bff; color: white; border: none; cursor: pointer;}
-  button:hover {background: #0056b3;}
-  .gallery {display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;}
-  .photo {background: #fafafa; border: 1px solid #ddd; border-radius: 8px; padding: 10px;}
-  .photo img {width: 100%; border-radius: 5px;}
-  .actions form {display: inline;}
-  .msg-box {text-align: center; background: #e8f5e9; padding: 20px; border-radius: 10px;}
-  .msg-box a {background: #007bff; color: white; text-decoration: none; padding: 10px 20px; border-radius: 6px;}
-  .msg-box a:hover {background: #0056b3;}
+body {font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 0;}
+.container {max-width: 900px; margin: 30px auto; background: white; padding: 25px; border-radius: 10px;}
+h2 {color: #007bff;}
+input, textarea, button {margin: 5px 0; padding: 10px; border-radius: 5px; border: 1px solid #ccc; font-size: 14px;}
+button {background: #007bff; color: white; border: none; cursor: pointer;}
+button:hover {background: #0056b3;}
+.gallery {display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;}
+.photo {background: #fafafa; border: 1px solid #ddd; border-radius: 8px; padding: 10px;}
+.photo img {width: 100%; border-radius: 5px;}
+.actions form {display: inline;}
+.msg-box {text-align: center; background: #e8f5e9; padding: 20px; border-radius: 10px;}
+.msg-box a {background: #007bff; color: white; text-decoration: none; padding: 10px 20px; border-radius: 6px;}
+.msg-box a:hover {background: #0056b3;}
+
+/* Small login form design */
+.login-form {
+  max-width: 350px;
+  margin: 0 auto 20px auto;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.login-form input, .login-form button {
+  width: 100%;
+  box-sizing: border-box;
+}
+.login-form button {
+  margin-top: 10px;
+}
 </style>
 </head>
 <body>
@@ -141,12 +158,14 @@ if (isset($_POST['edit']) && isset($_SESSION['user_id'])) {
   <?php if (!empty($error)) echo "<p style='color:red;'>$error</p>"; ?>
   <?php if (!empty($success)) echo "<p style='color:green;'>$success</p>"; ?>
 
-  <form method="post">
-    <input type="text" name="username" placeholder="Username" required>
-    <input type="password" name="password" placeholder="Password" required>
-    <button name="login">Login</button>
-    <button name="register" style="background:green;">Register</button>
-  </form>
+  <div class="login-form">
+    <form method="post">
+      <input type="text" name="username" placeholder="Username" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <button name="login">Login</button>
+      <button name="register" style="background:green;">Register</button>
+    </form>
+  </div>
 
 <?php else: ?>
 
@@ -168,6 +187,7 @@ if (isset($_POST['edit']) && isset($_SESSION['user_id'])) {
       <button type="submit" name="upload">Upload Photo</button>
     </form>
   <?php endif; ?>
+
   <?php if (isset($_GET['show']) && $_GET['show'] === 'gallery'): ?>
     <h2>Your Gallery</h2>
     <div class="gallery">
@@ -204,4 +224,3 @@ if (isset($_POST['edit']) && isset($_SESSION['user_id'])) {
 </div>
 </body>
 </html>
-
