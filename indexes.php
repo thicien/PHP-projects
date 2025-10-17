@@ -115,10 +115,12 @@ if (isset($_POST['edit']) && isset($_SESSION['user_id'])) {
 <style>
 body {font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 0;}
 .container {max-width: 900px; margin: 30px auto; background: white; padding: 25px; border-radius: 10px;}
-h2 {color: #007bff;}
+h1 {color: #007bff; text-align: center;}
+h2 {color: #0c0d0dff; text-align: center;}
 input, textarea, button {margin: 5px 0; padding: 10px; border-radius: 5px; border: 1px solid #ccc; font-size: 14px;}
 button {background: #007bff; color: white; border: none; cursor: pointer;}
 button:hover {background: #0056b3;}
+textarea {resize: vertical;}
 .gallery {display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;}
 .photo {background: #fafafa; border: 1px solid #ddd; border-radius: 8px; padding: 10px;}
 .photo img {width: 100%; border-radius: 5px;}
@@ -127,15 +129,17 @@ button:hover {background: #0056b3;}
 .msg-box a {background: #007bff; color: white; text-decoration: none; padding: 10px 20px; border-radius: 6px;}
 .msg-box a:hover {background: #0056b3;}
 
-/* Small login form design */
 .login-form {
-  max-width: 250px;
+  max-width: 350px;
   margin: 0 auto 20px auto;
   padding: 20px;
   background: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  text-align: center;
 }
+.login-form h1 {font-size: 24px; margin-bottom: 10px;}
+.login-form h2 {font-size: 18px; margin-bottom: 20px;}
 .login-form input, .login-form button {
   width: 100%;
   box-sizing: border-box;
@@ -143,22 +147,34 @@ button:hover {background: #0056b3;}
 .login-form button {
   margin-top: 10px;
 }
+
+.user-area {
+  max-width: 500px;
+  margin: 0 auto 20px auto;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.user-area p {text-align:center; margin-bottom: 15px;}
+.user-area input, .user-area textarea, .user-area button {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 5px;
+}
+.user-area button {margin-top: 10px;}
 </style>
 </head>
 <body>
 
 <div class="container">
-<header>
-  <h1>📸 My Photo Album - Thicien</h1>
-</header>
 
 <?php if (!isset($_SESSION['user_id'])): ?>
-
-  <h2>Login / Register</h2>
-  <?php if (!empty($error)) echo "<p style='color:red;'>$error</p>"; ?>
-  <?php if (!empty($success)) echo "<p style='color:green;'>$success</p>"; ?>
-
   <div class="login-form">
+    <h1>📸 My Photo Album - Thicien</h1>
+    <h2>Login / Register</h2>
+    <?php if (!empty($error)) echo "<p style='color:red;'>$error</p>"; ?>
+    <?php if (!empty($success)) echo "<p style='color:green;'>$success</p>"; ?>
     <form method="post">
       <input type="text" name="username" placeholder="Username" required>
       <input type="password" name="password" placeholder="Password" required>
@@ -166,27 +182,24 @@ button:hover {background: #0056b3;}
       <button name="register" style="background:green;">Register</button>
     </form>
   </div>
-
 <?php else: ?>
-
-  <p>Welcome, <b><?= htmlspecialchars($_SESSION['username']) ?></b> |
-  <a href="?logout" style="color:red;">Logout</a></p>
-
-  <h2>Add New Photo</h2>
-
-  <?php if ($upload_success): ?>
-    <div class="msg-box">
-      <h3>✅ Photo uploaded successfully!</h3>
-      <a href="?show=gallery">Go to Gallery</a>
-    </div>
-  <?php else: ?>
-    <form method="post" enctype="multipart/form-data">
-      <input type="text" name="title" placeholder="Photo title" required>
-      <textarea name="description" placeholder="Photo description" required></textarea>
-      <input type="file" name="photo" accept="image/*" required>
-      <button type="submit" name="upload">Upload Photo</button>
-    </form>
-  <?php endif; ?>
+  <div class="user-area">
+    <p>Welcome, <b><?= htmlspecialchars($_SESSION['username']) ?></b> | <a href="?logout" style="color:red;">Logout</a></p>
+    <h2>Add New Photo</h2>
+    <?php if ($upload_success): ?>
+      <div class="msg-box">
+        <h3>✅ Photo uploaded successfully!</h3>
+        <a href="?show=gallery">Go to Gallery</a>
+      </div>
+    <?php else: ?>
+      <form method="post" enctype="multipart/form-data">
+        <input type="text" name="title" placeholder="Photo title" required>
+        <textarea name="description" placeholder="Photo description" required></textarea>
+        <input type="file" name="photo" accept="image/*" required>
+        <button type="submit" name="upload">Upload Photo</button>
+      </form>
+    <?php endif; ?>
+  </div>
 
   <?php if (isset($_GET['show']) && $_GET['show'] === 'gallery'): ?>
     <h2>Your Gallery</h2>
