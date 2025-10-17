@@ -129,7 +129,7 @@ button:hover {background: #0056b3;}
 
 /* Small login form design */
 .login-form {
-  max-width: 350px;
+  max-width: 250px;
   margin: 0 auto 20px auto;
   padding: 20px;
   background: #f9f9f9;
